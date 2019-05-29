@@ -1,0 +1,28 @@
+.highlight {
+  background: rgba(255, 255, 40, .3) !important;
+  text-decoration: underline;
+  cursor: help;
+
+  position: relative
+}
+
+.highlight::after {
+  position: absolute;
+  left: 50%;
+  opacity: 0;
+  transition: all ease 0.3s;
+}
+
+.highlight::after {
+  display: none;
+  content: attr(data-evoke);
+  background: rgba(255, 255, 20, .9);
+  padding: 5px;
+  border-radius: 10px;
+  z-index: 100;
+}
+
+.highlight:hover::after {
+  display: block;
+  opacity: 1;
+}
