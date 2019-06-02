@@ -138,8 +138,6 @@ const TestTextHighlighting = (keywords) => {
 
 window.addEventListener ("load", myMain, false);
 
-
-
 function myMain (evt) {
   chrome.storage.onChanged.addListener(function(changes, namespace) {
     if (changes.keywords ) {

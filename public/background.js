@@ -41,15 +41,20 @@ const fetchKeywords = () => {
 
 const sendToEvoke = selection => {
   const query = selection.selectionText;
-  console.log('SEND: ', query)
-  // return fetch(URL, {
-  //   method: 'POST',
-  //   headers: {
-  //       'Content-Type': 'application/json',
-  //   },
-  //   body: JSON.stringify(REQUEST_PAYLOAD),
-  // })
-  // .then(response => response.json());
+
+  // fetch definition
+  // display in notification and ask whether we should add it to vocab
+  
+  const opt = {
+    type: 'basic',
+    title: 'EVOKE',
+    message: `Add ${query} to vocabulary`,
+    iconUrl:'./favicon.ico',
+    priority: 1
+  };
+
+  chrome.notifications.create(`${query}-id`, opt, function(id) { console.log("Last error:", chrome.runtime.lastError); });
+
 }
 
 chrome.contextMenus.create({
