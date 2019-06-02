@@ -1,6 +1,6 @@
 const InstantSearch = {
 
-  highlight: (container, highlightText) => {
+  highlight: (container, highlightText, tooltipText) => {
     const internalHighlighter = function (options){
 
       var id = {
@@ -75,7 +75,7 @@ const InstantSearch = {
                   span.appendChild(document.createTextNode(matched));
 
                   span.addEventListener("mouseover", (e) => console.log('MOUSED OVER', e));
-                  span.setAttribute('data-evoke', 'This is highlighted because...');
+                  span.setAttribute('data-evoke', tooltipText);
 
                   parentNode.insertBefore(span, node);
 
@@ -128,13 +128,37 @@ const InstantSearch = {
   }
 }
 
-const TestTextHighlighting = (highlightText) => {
+const TestTextHighlighting = (highlightText, tooltipText) => {
     const container = document.body;
-    InstantSearch.highlight(container, highlightText);
+    InstantSearch.highlight(container, highlightText, tooltipText);
 }
 
 window.addEventListener ("load", myMain, false);
 
+
+
 function myMain (evt) {
-  TestTextHighlighting('the')
+  chrome.storage.onChanged.addListener(function(changes, namespace) {
+    if (changes.keywords ) {
+      const keywords = changes.keywords.newValue
+      if (typeof keywords[Symbol.iterator] === 'function') {
+        for (let keyword of changes.keywords.newValue) {
+          let tooltipText
+          if (keyword.keyword_type == 'Definition') {
+            tooltipText = `Contained in ${keyword.related} collection.`
+          } else {
+            tooltipText = `${keyword.keyword_type} of ${keyword.related}`
+          }
+          TestTextHighlighting(keyword.keyword, tooltipText)
+        }
+      }
+    }
+  });
+
+  // send message to let background know we're ready
+  chrome.runtime.sendMessage({fetchReady: true}, function(response) {
+    console.log('RES:', response);
+  });
 }
+
+

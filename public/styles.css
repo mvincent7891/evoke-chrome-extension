@@ -1,7 +1,7 @@
 .highlight {
-  background: rgba(255, 255, 40, .3) !important;
+  background: rgba(144, 202, 249, .3) !important;
   text-decoration: underline;
-  cursor: help;
+  cursor: pointer;
 
   position: relative
 }
@@ -14,15 +14,17 @@
 }
 
 .highlight::after {
-  display: none;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 12px;
   content: attr(data-evoke);
-  background: rgba(255, 255, 20, .9);
+  background: rgba(34, 150, 243, .95);
+  color: white;
   padding: 5px;
   border-radius: 10px;
   z-index: 100;
+  width: 200px;
 }
 
 .highlight:hover::after {
-  display: block;
   opacity: 1;
 }
