@@ -1,66 +1,49 @@
-const KEYWORDS_QUERY = `{ 
-  keywords {
-    keyword
-    keyword_type
-    keyword_id
-    related
-    related_type
-    related_id
-  }
-}`;
+import {
+  fetchDefinition,
+  fetchKeywords,
+  APP_URL,
+} from './graphqlAPI.js';
+import {
+  newID,
+  formatDefinition
+} from './utils.js';
 
+const lookupWithEvoke = selection => {
+  const term = selection.selectionText;
+  fetchDefinition(term).then(res => {
+    const message = res.data.lookup.length ? 
+      (res.data.lookup.map(def => formatDefinition(def)).join('\n\n')) : `No entry found for ${term}.`
+    const opt = {
+      type: 'basic',
+      title: 'EVOKE Lookup',
+      message,
+      iconUrl:'./favicon.ico',
+      priority: 1,
+      buttons: [
+        {title: "Add to Evoke"}, {title: "Manage"}
+      ]
+    };
+    
+    const notificationId = newID()
+    chrome.notifications.create(notificationId, opt, function(id) { console.log("Last error:", chrome.runtime.lastError); });
 
-const REQUEST_PAYLOAD = {
-  operationName: null,
-  query: KEYWORDS_QUERY,
-  variables: {}
-};
-
-const URL = 'http://localhost:3000/graphql';
-
-const fetchKeywords = () => {
-  return fetch(URL, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(REQUEST_PAYLOAD),
+    chrome.notifications.onButtonClicked.addListener((nId, bIndex) => {
+      if (notificationId == nId) {
+        if (bIndex == 0) {
+          // send to Evoke
+        } else {
+          // manage in Evoke
+          window.open(`${APP_URL}/entries`, "_blank")
+        }
+      }
+    })
   })
-  .then(response => response.json());
-}
-
-// chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
-//   if (changeInfo.status == 'complete') {
-//     fetchKeywords().then(data => {
-//       chrome.storage.local.set({ data: data.keywords }, function() {
-//         console.log('Data saved', data);
-//       });
-//     })
-//   }
-// })
-
-const sendToEvoke = selection => {
-  const query = selection.selectionText;
-
-  // fetch definition
-  // display in notification and ask whether we should add it to vocab
-  
-  const opt = {
-    type: 'basic',
-    title: 'EVOKE',
-    message: `Add ${query} to vocabulary`,
-    iconUrl:'./favicon.ico',
-    priority: 1
-  };
-
-  chrome.notifications.create(`${query}-id`, opt, function(id) { console.log("Last error:", chrome.runtime.lastError); });
-
 }
 
 chrome.contextMenus.create({
-  title: "Send to EVOKE",
+  title: "EVOKE",
   contexts:["selection"],
-  onclick: sendToEvoke
+  onclick: lookupWithEvoke
 });
 
 chrome.runtime.onMessage.addListener(
