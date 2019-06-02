@@ -14,7 +14,6 @@ const REQUEST_PAYLOAD = {
   variables: {}
 };
 
-
 const fetchKeywords = () => {
   return fetch(url, {
     method: 'POST',
@@ -26,4 +25,3 @@ const fetchKeywords = () => {
   .then(response => response.json().then(data => console.log(data)));
 }
 
-export default fetchKeywords;

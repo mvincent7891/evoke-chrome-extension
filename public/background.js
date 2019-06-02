@@ -9,6 +9,7 @@ const KEYWORDS_QUERY = `{
   }
 }`;
 
+
 const REQUEST_PAYLOAD = {
   operationName: null,
   query: KEYWORDS_QUERY,
@@ -48,8 +49,25 @@ chrome.runtime.onMessage.addListener(
       });
 
       fetchKeywords().then(res => {
-        chrome.storage.local.set({ keywords: res.data.keywords }, function() {
-          console.log('Keywords saved.')
+        const keywordMap = {}
+        let tooltipText
+        for (const keyword of res.data.keywords) {
+          if (keyword.keyword_type == 'Definition') {
+            tooltipText = `Contained in ${keyword.related} collection.`
+          } else {
+            tooltipText = `${keyword.keyword_type} of ${keyword.related}`
+          }
+          keyword.tooltipText = tooltipText
+
+          if (keywordMap[keyword.keyword]) {
+            keywordMap[keyword.keyword].push(keyword)
+          } else {
+            keywordMap[keyword.keyword] = [keyword]
+          }
+        }
+        
+        chrome.storage.local.set({ keywords: keywordMap }, function() {
+          console.log('Keywords saved.') 
         });
       })
     }

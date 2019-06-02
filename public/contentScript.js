@@ -1,6 +1,6 @@
 const InstantSearch = {
 
-  highlight: (container, highlightText, tooltipText) => {
+  highlight: (container, keywords) => {
     const internalHighlighter = function (options){
 
       var id = {
@@ -75,6 +75,10 @@ const InstantSearch = {
                   span.appendChild(document.createTextNode(matched));
 
                   span.addEventListener("mouseover", (e) => console.log('MOUSED OVER', e));
+
+                  const tooltipText = keywords[myToken].map(_keyword => (
+                    _keyword.tooltipText
+                  )).join('; ')
                   span.setAttribute('data-evoke', tooltipText);
 
                   parentNode.insertBefore(span, node);
@@ -111,26 +115,28 @@ const InstantSearch = {
       iterator(options[id.container]);
     };
 
+    const allTokens = Object.keys(keywords).map(keyword => ({
+      token: keyword,
+      className: "highlight",
+      sensitiveSearch: false
+    }))
 
+    console.log('TOKENS:', allTokens)
+    
     internalHighlighter({
       container: container,
       all: {
         className: "highlighter"
       },
-      tokens: [
-        {
-          token: highlightText, 
-          className: "highlight",
-          sensitiveSearch: false
-        }
-      ]
+      tokens: allTokens
     })
   }
 }
 
-const TestTextHighlighting = (highlightText, tooltipText) => {
+const TestTextHighlighting = (keywords) => {
     const container = document.body;
-    InstantSearch.highlight(container, highlightText, tooltipText);
+    console.log('HIGHLIGHTING', keywords)
+    InstantSearch.highlight(container, keywords);
 }
 
 window.addEventListener ("load", myMain, false);
@@ -141,16 +147,8 @@ function myMain (evt) {
   chrome.storage.onChanged.addListener(function(changes, namespace) {
     if (changes.keywords ) {
       const keywords = changes.keywords.newValue
-      if (typeof keywords[Symbol.iterator] === 'function') {
-        for (let keyword of changes.keywords.newValue) {
-          let tooltipText
-          if (keyword.keyword_type == 'Definition') {
-            tooltipText = `Contained in ${keyword.related} collection.`
-          } else {
-            tooltipText = `${keyword.keyword_type} of ${keyword.related}`
-          }
-          TestTextHighlighting(keyword.keyword, tooltipText)
-        }
+      if (keywords) {
+        TestTextHighlighting(keywords)
       }
     }
   });
