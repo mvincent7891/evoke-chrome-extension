@@ -39,6 +39,25 @@ const fetchKeywords = () => {
 //   }
 // })
 
+const sendToEvoke = selection => {
+  const query = selection.selectionText;
+  console.log('SEND: ', query)
+  // return fetch(URL, {
+  //   method: 'POST',
+  //   headers: {
+  //       'Content-Type': 'application/json',
+  //   },
+  //   body: JSON.stringify(REQUEST_PAYLOAD),
+  // })
+  // .then(response => response.json());
+}
+
+chrome.contextMenus.create({
+  title: "Send to EVOKE",
+  contexts:["selection"],
+  onclick: sendToEvoke
+});
+
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     if (request.fetchReady == true) {
@@ -53,9 +72,10 @@ chrome.runtime.onMessage.addListener(
         let tooltipText
         for (const keyword of res.data.keywords) {
           if (keyword.keyword_type == 'Definition') {
-            tooltipText = `Contained in ${keyword.related} collection.`
+            tooltipText = `/${keyword.keyword}/ is contained in your ${keyword.related} collection.`
           } else {
-            tooltipText = `${keyword.keyword_type} of ${keyword.related}`
+            const kType = keyword.keyword_type
+            tooltipText = `/${keyword.keyword}/ is a${kType == 'Antonym' ? 'n' : ''} ${kType.toLowerCase()} of ${keyword.related}`
           }
           keyword.tooltipText = tooltipText
 

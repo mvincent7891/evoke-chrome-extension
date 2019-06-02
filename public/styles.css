@@ -7,21 +7,25 @@
 }
 
 .highlight::after {
-  position: absolute;
-  left: 50%;
+  /* position: absolute; */
+  /* left: 50%; */
+  position: fixed;
+  left: 15px;
+  bottom: 50%;
   opacity: 0;
   transition: all ease 0.3s;
 }
 
 .highlight::after {
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-size: 12px;
+  font-size: 14px;
+  line-height: 20px;
   content: attr(data-evoke);
-  background: rgba(34, 150, 243, .95);
+  background: rgba(34, 150, 243, .94);
   color: white;
-  padding: 5px;
-  border-radius: 10px;
-  z-index: 100;
+  padding: 8px 12px;
+  border-radius: 5px;
+  z-index: 1000;
   width: 200px;
 }
 

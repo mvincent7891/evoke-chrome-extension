@@ -74,12 +74,12 @@ const InstantSearch = {
                   span.className += finalClassName;
                   span.appendChild(document.createTextNode(matched));
 
-                  span.addEventListener("mouseover", (e) => console.log('MOUSED OVER', e));
+                  span.addEventListener("click", () => window.open("http://localhost:3003/entries", "_blank"))
 
                   const tooltipText = keywords[myToken].map(_keyword => (
                     _keyword.tooltipText
                   )).join('; ')
-                  span.setAttribute('data-evoke', tooltipText);
+                  span.setAttribute('data-evoke', `EVOKE ${tooltipText}`);
 
                   parentNode.insertBefore(span, node);
 
@@ -120,8 +120,6 @@ const InstantSearch = {
       className: "highlight",
       sensitiveSearch: false
     }))
-
-    console.log('TOKENS:', allTokens)
     
     internalHighlighter({
       container: container,
@@ -135,7 +133,6 @@ const InstantSearch = {
 
 const TestTextHighlighting = (keywords) => {
     const container = document.body;
-    console.log('HIGHLIGHTING', keywords)
     InstantSearch.highlight(container, keywords);
 }
 
@@ -155,7 +152,7 @@ function myMain (evt) {
 
   // send message to let background know we're ready
   chrome.runtime.sendMessage({fetchReady: true}, function(response) {
-    console.log('RES:', response);
+    console.log('response received');
   });
 }
 
