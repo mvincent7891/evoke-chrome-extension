@@ -1,3 +1,6 @@
+export const API_URL = 'http://localhost:3000';
+export const APP_URL = 'http://localhost:3003';
+
 const KEYWORDS_QUERY = `{ 
   keywords {
     keyword
@@ -18,6 +21,18 @@ const LOOKUP_QUERY = `query LookupTerm($term: String!) {
   }
 }`
 
+const CREATE_MANY_DEFINITIONS_MUTATION = `
+  mutation(
+    $definitions: [DefinitionInputType]
+  ) {
+    create_many_definitions(
+      definitions :$definitions
+    ) {
+      id
+    }
+  }
+`
+
 export const KEYWORDS_REQUEST_PAYLOAD = {
   operationName: null,
   query: KEYWORDS_QUERY,
@@ -30,28 +45,34 @@ export const lookupQueryPayload = term => ({
   variables: { term }
 })
 
-export const API_URL = 'http://localhost:3000';
-export const APP_URL = 'http://localhost:3003';
+
+export const createManyDefinitionsPayload = definitions => ({
+  operationName: null,
+  query: CREATE_MANY_DEFINITIONS_MUTATION,
+  variables: { definitions }
+})
 
 export const fetchKeywords = () => {
-  return fetch(`${API_URL}/graphql`, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(KEYWORDS_REQUEST_PAYLOAD),
-  })
-  .then(response => response.json());
+  const body = JSON.stringify(KEYWORDS_REQUEST_PAYLOAD)
+  return fetchGraphql(body).then(response => response.json());
 }
 
 export const fetchDefinition = term => {
   const body = JSON.stringify(lookupQueryPayload(term))
-  return fetch(`${API_URL}/graphql`, {
+  return fetchGraphql(body).then(response => response.json());
+}
+
+export const createManyDefinitions = definitions => {
+  const body = JSON.stringify(createManyDefinitionsPayload(definitions))
+  return fetchGraphql(body).then(response => response.json());
+}
+
+const fetchGraphql = body => (
+  fetch(`${API_URL}/graphql`, {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',
     },
-    body,
+    body
   })
-  .then(response => response.json());
-}
+)

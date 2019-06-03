@@ -1,3 +1,7 @@
+const onlyUnique = (value, index, self) => { 
+  return self.indexOf(value) === index;
+}
+
 const InstantSearch = {
 
   highlight: (container, keywords) => {
@@ -78,7 +82,7 @@ const InstantSearch = {
 
                   const tooltipText = keywords[myToken].map(_keyword => (
                     _keyword.tooltipText
-                  )).join('; ')
+                  )).filter(onlyUnique).join('; ')
                   span.setAttribute('data-evoke', `EVOKE ${tooltipText}`);
 
                   parentNode.insertBefore(span, node);
