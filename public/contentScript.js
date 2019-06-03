@@ -156,6 +156,46 @@ function myMain (evt) {
   chrome.runtime.sendMessage({fetchReady: true}, function(response) {
     console.log('response received');
   });
+
+  // modal
+  chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+      if ( request.action == "evokeModal" ) {
+
+        let innerHTML;
+        switch (request.state) {
+          case "loading":
+            innerHTML = "Loading..."
+            break;
+          case "complete":
+            innerHTML = `<div>${request.message}</div>`
+            break;
+          default:
+            return
+        }
+
+        background = document.createElement('div');
+        background.id = "evoke-modal-background";
+        modal = document.createElement('div');
+        modal.id = "evoke-modal";
+        modal.innerHTML = innerHTML;
+        
+        document.body.appendChild(background);
+        background.appendChild( modal );
+        closeScriptureModal = function() {
+          const mdl = document.getElementById('evoke-modal-background');
+          mdl.parentNode.removeChild( mdl );
+        }
+        
+        button = document.createElement('button');
+        button.onclick=closeScriptureModal;
+        button.textContent='Close';
+        modal.appendChild(button);
+        sendResponse({farewell: "goodbye"});
+    }
+  })
 }
+
+
 
 

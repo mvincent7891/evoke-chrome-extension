@@ -7,7 +7,7 @@
       "default_popup": "index.html"
   },
   "permissions": [
-    "activeTab", "storage", "contextMenus", "notifications"
+    "activeTab", "storage", "contextMenus", "notifications", "tabs"
   ],
   "background": {
     "page": "background.html"
