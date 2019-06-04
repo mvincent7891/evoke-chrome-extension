@@ -161,11 +161,11 @@ function myMain (evt) {
   chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
       if ( request.action == "evokeModal" ) {
-
+        console.log('MODAL:', request)
         let innerHTML;
         switch (request.state) {
           case "loading":
-            innerHTML = "Loading..."
+            innerHTML = `<div class="loader-container"><div class="loader"></div></div`
             break;
           case "complete":
             innerHTML = `<div>${request.message}</div>`
@@ -186,7 +186,7 @@ function myMain (evt) {
           const mdl = document.getElementById('evoke-modal-background');
           mdl.parentNode.removeChild( mdl );
         }
-        
+
         button = document.createElement('button');
         button.onclick=closeScriptureModal;
         button.textContent='Close';
