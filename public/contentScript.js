@@ -32,6 +32,7 @@ const InstantSearch = {
           {
               curToken = tokenArr[i];
               myToken = curToken[id.token];
+              myTokenSpaced = ` ${myToken} `;
               myClassName = curToken[id.className];
               mySensitiveSearch = curToken[id.sensitiveSearch];
 
@@ -43,9 +44,9 @@ const InstantSearch = {
               while (true)
               {
                   if (finalSensitiveSearch)
-                      foundIndex = nodeVal.indexOf(myToken);
+                      foundIndex = nodeVal.indexOf(myTokenSpaced);
                   else
-                      foundIndex = nodeVal.toLowerCase().indexOf(myToken.toLowerCase());
+                      foundIndex = nodeVal.toLowerCase().indexOf(myTokenSpaced.toLowerCase());
 
                   if (foundIndex < 0)
                   {
@@ -65,8 +66,8 @@ const InstantSearch = {
                   isFirst = false;
 
 
-                  begin = nodeVal.substring(0, foundIndex);
-                  matched = nodeVal.substr(foundIndex, myToken.length);
+                  begin = nodeVal.substring(0, foundIndex + 1);
+                  matched = nodeVal.substr(foundIndex + 1, myToken.length);
 
                   if (begin)
                   {
@@ -74,6 +75,8 @@ const InstantSearch = {
                       parentNode.insertBefore(textNode, node);
                   } // End if (begin)
 
+
+ 
                   span = document.createElement("span");
                   span.className += finalClassName;
                   span.appendChild(document.createTextNode(matched));
@@ -87,7 +90,7 @@ const InstantSearch = {
 
                   parentNode.insertBefore(span, node);
 
-                  nodeVal = nodeVal.substring(foundIndex + myToken.length);
+                  nodeVal = nodeVal.substring(foundIndex + 1 + myToken.length);
               } // Whend
 
           } // Next i 
@@ -120,7 +123,7 @@ const InstantSearch = {
     };
 
     const allTokens = Object.keys(keywords).map(keyword => ({
-      token: keyword,
+      token: `${keyword}`,
       className: "highlight",
       sensitiveSearch: false
     }))
